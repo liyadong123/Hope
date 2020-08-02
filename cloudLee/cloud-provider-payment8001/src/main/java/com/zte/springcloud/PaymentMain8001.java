@@ -7,6 +7,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 /**
  * @auther zzyy
  * @create 2020-02-17 21:13
+ * Eureka理念是CAP的AP
  */
 @SpringBootApplication
 @EnableEurekaClient

@@ -5,6 +5,8 @@ import com.zte.springcloud.entities.Payment;
 import com.zte.springcloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +27,8 @@ public class PaymentController
     @Value("${server.port}")
     private String serverPort;
 
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @PostMapping(value = "/payment/create")
     public CommonResult create(@RequestBody Payment payment)
@@ -52,5 +56,21 @@ public class PaymentController
             return new CommonResult(444,"没有对应记录,查询ID: "+id,null);
         }
     }
+    @GetMapping("/payment/discovery")
+    public Object discovery(){
+        //发现服务客户端所有服务实例
+        List<String> services = discoveryClient.getServices();
+        //循环遍历所有服务名
+        for(String element:services){
+            log.info("**************element:"+element);
+        }
+        //获取指定服务实例下的信息
+        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        for(ServiceInstance instance :instances){
+            log.info("*****"+instance.getServiceId()+"\t"+instance.getHost()+"\t"+instance.getPort()+"\t"+instance.getUri());
+        }
+        return this.discoveryClient;
+    }
+        
 
 }
